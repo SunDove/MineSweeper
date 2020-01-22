@@ -28,6 +28,7 @@ class Engine:
         self._height = height
         self._bombs = bombs
         self._board = self._generate_board()
+        self._flag_locs = []
 
     def get_width(self):
         return self._width
@@ -35,8 +36,27 @@ class Engine:
     def get_height(self):
         return self._height
 
-    def get_board(self):
+    def get_display_board(self):
+        """
+        Returns the board array with flags
+        """
+        dboard = self._board.copy()
+        for fl in self._flag_locs:
+            dboard[x, y] = Spaces.FLAG
+            
+        return dboard
+
+    def get_real_board(self):
+        """
+        Returns the board array without flags, meaning with their actual spaces values
+        """
         return self._board
+
+    def toggle_flag(self, x, y):
+        if (x, y) in self._flag_locs:
+            self._flag_locs.remove((x, y))
+        else:
+            self._flag_locs.append((x, y))
 
     def __str__(self):
         return str(self._board)

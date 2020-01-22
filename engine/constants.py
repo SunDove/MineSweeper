@@ -16,4 +16,5 @@ class Spaces(Enum):
     FOUR = 4
     FIVE = 5
     SIX = 6
-    SEVEN = 7
+    SEVEN = 7,
+    FLAG = 8
