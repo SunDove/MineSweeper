@@ -46,6 +46,8 @@ class Engine:
             x, y = fl
             dboard[x, y] = Spaces.FLAG
 
+        dboard[dboard == Spaces.BOMB] = Spaces.UNKNOWN
+
         return dboard
 
     def get_real_board(self):
@@ -68,13 +70,13 @@ class Engine:
         Checks the given (x, y) coordinate ie. when the user clicks a tile
         :return: False if the space was a bomb, True otherwise
         """
-        s = self.get_display_board()[x, y]
-        if s == Spaces.BOMB:
-            return False
-
-        if s == Spaces.FLAG:
+        if (x, y) in self._flag_locs:
             self.toggle_flag(x, y)
             return True
+
+        s = self.get_real_board()[x, y]
+        if s == Spaces.BOMB:
+            return False
 
         self._safe_check_location(x, y)
         return True
@@ -112,8 +114,6 @@ class Engine:
                 if self._board[i, j] == Spaces.BOMB:
                     count += 1
         return count
-
-
 
     def __str__(self):
         return str(self._board)
