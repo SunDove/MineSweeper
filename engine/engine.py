@@ -43,6 +43,7 @@ class Engine:
         """
         dboard = self._board.copy()
         for fl in self._flag_locs:
+            x, y = fl
             dboard[x, y] = Spaces.FLAG
 
         return dboard
