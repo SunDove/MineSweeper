@@ -1,5 +1,6 @@
 import numpy as np
 import constants as C
+Spaces = C.Spaces
 
 
 class Engine:
@@ -42,8 +43,9 @@ class Engine:
         """
         dboard = self._board.copy()
         for fl in self._flag_locs:
+            x, y = fl
             dboard[x, y] = Spaces.FLAG
-            
+
         return dboard
 
     def get_real_board(self):
@@ -53,10 +55,65 @@ class Engine:
         return self._board
 
     def toggle_flag(self, x, y):
+        """
+        Toggles the flag at the given (x, y) coordinate
+        """
         if (x, y) in self._flag_locs:
             self._flag_locs.remove((x, y))
         else:
             self._flag_locs.append((x, y))
+
+    def check_location(self, x, y):
+        """
+        Checks the given (x, y) coordinate ie. when the user clicks a tile
+        :return: False if the space was a bomb, True otherwise
+        """
+        s = self.get_display_board()[x, y]
+        if s == Spaces.BOMB:
+            return False
+
+        if s == Spaces.FLAG:
+            self.toggle_flag(x, y)
+            return True
+
+        self._safe_check_location(x, y)
+        return True
+
+    def _safe_check_location(self, x, y):
+        """
+        Sets the board indices to the number of neighboring bombs
+        If the space has 0 neighboring bombs then it will check the spaces in the N, E, W, and S directions (not diagonals)
+        """
+        if self._board[x, y] != Spaces.UNKNOWN:
+            return
+        num_bombs = self._get_neighboring_bombs(x, y)
+        self._board[x, y] = Spaces(num_bombs)
+        if num_bombs == 0:
+            if x-1 >= 0:
+                self._safe_check_location(x-1, y)
+            if x+1 < self._width:
+                self._safe_check_location(x+1, y)
+            if y-1 >= 0:
+                self._safe_check_location(x, y-1)
+            if y+1 < self._height:
+                self._safe_check_location(x, y+1)
+
+    def _get_neighboring_bombs(self, x, y):
+        """
+        Counts the number of bombs neighboring the tile at (x, y)
+        """
+        count = 0
+        for i in range(x-1, x+2):
+            if i < 0 or i >= self._width:
+                continue
+            for j in range(y-1, y+2):
+                if j < 0 or j >= self._height:
+                    continue
+                if self._board[i, j] == Spaces.BOMB:
+                    count += 1
+        return count
+
+
 
     def __str__(self):
         return str(self._board)
