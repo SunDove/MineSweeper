@@ -68,7 +68,7 @@ class Engine:
         Checks the given (x, y) coordinate ie. when the user clicks a tile
         :return: False if the space was a bomb, True otherwise
         """
-        s = self._board[x, y]
+        s = self.get_display_board()[x, y]
         if s == Spaces.BOMB:
             return False
 
@@ -84,6 +84,8 @@ class Engine:
         Sets the board indices to the number of neighboring bombs
         If the space has 0 neighboring bombs then it will check the spaces in the N, E, W, and S directions (not diagonals)
         """
+        if self._board[x, y] != Spaces.UNKNOWN:
+            return
         num_bombs = self._get_neighboring_bombs(x, y)
         self._board[x, y] = Spaces(num_bombs)
         if num_bombs == 0:
