@@ -8,13 +8,15 @@ MIN_HEIGHT = 10
 MAX_HEIGHT = 100
 
 class Spaces(Enum):
+    UNKNOWN = -2
     BOMB = -1
-    UNKNOWN = 0
+    ZERO = 0
     ONE = 1
     TWO = 2
     THREE = 3
     FOUR = 4
     FIVE = 5
     SIX = 6
-    SEVEN = 7,
-    FLAG = 8
+    SEVEN = 7
+    EIGHT = 8
+    FLAG = 9
