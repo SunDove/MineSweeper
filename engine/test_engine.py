@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-from engine import Engine
+from engine.engine import Engine
 from constants import Spaces
 
 
