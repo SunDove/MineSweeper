@@ -63,6 +63,8 @@ class Engine:
         if (x, y) in self._flag_locs:
             self._flag_locs.remove((x, y))
         else:
+            if self._board[x, y] != Spaces.UNKNOWN:
+                return
             self._flag_locs.append((x, y))
 
     def check_location(self, x, y):
