@@ -1,9 +1,10 @@
 import pygame as pg
-from graphics.minesweeper import Board
+from graphics.board import Board
 from engine.engine import Engine
 
 LEFT_CLICK = 1
 RIGHT_CLICK = 3
+
 
 class Game:
     """
