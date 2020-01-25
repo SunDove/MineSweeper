@@ -1,7 +1,7 @@
 from enum import Enum
 from collections import defaultdict
 
-MAX_BOMB_RATIO = 0.5
+MAX_BOMB_RATIO = 0.3
 MIN_WIDTH = 10
 MAX_WIDTH = 100
 MIN_HEIGHT = 10

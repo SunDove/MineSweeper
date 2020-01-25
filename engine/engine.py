@@ -9,7 +9,7 @@ class Engine:
     This includes generating the board randomly and revealing spaces
     """
 
-    def __init__(self, width, height, bombs):
+    def __init__(self, width, height, bombs, gamemode):
         """
         Engine constructor
         :param width: Width of the board, min and max values found in constants.py
@@ -17,7 +17,7 @@ class Engine:
         :param bombs: Number of bombs in the board, cannot exceed ratio defined in constants.py
         """
         if (bombs/(width*height)) > C.MAX_BOMB_RATIO:
-            raise ValueError('Number of bombs cannot be more than half of the total spaces ({} bombs, {} spaces).'.format(bombs, width*height))
+            raise ValueError('Number of bombs cannot be more than {}% of the total spaces ({} bombs, {} spaces).'.format(C.MAX_BOMB_RATIO*100, bombs, width*height))
 
         if width < C.MIN_WIDTH or width > C.MAX_WIDTH:
             raise ValueError('Width must be within constraints {} < width < {}'.format(C.MIN_WIDTH, C.MAX_WIDTH))
@@ -28,7 +28,9 @@ class Engine:
         self._width = width
         self._height = height
         self._bombs = bombs
+        self._gamemode = gamemode
         self._board = self._generate_board()
+        self._first_move = False
         self._flag_locs = []
 
     def get_width(self):
@@ -72,6 +74,10 @@ class Engine:
         Checks the given (x, y) coordinate ie. when the user clicks a tile
         :return: False if the space was a bomb, True otherwise
         """
+        if not self._first_move:
+            self._check_safe_first_move(x, y)
+            self._first_move = True
+
         if (x, y) in self._flag_locs:
             self.toggle_flag(x, y)
             return True
@@ -80,8 +86,43 @@ class Engine:
         if s == Spaces.BOMB:
             return False
 
+        if s != Spaces.UNKNOWN:
+            if self.get_neighboring_space_count(x, y, Spaces.FLAG) == s.value:
+                # Space is solved, click around
+                return self._unsafe_check_neighbors(x, y)
+
         self._safe_check_location(x, y)
         return True
+
+    def _unsafe_check_neighbors(self, x, y):
+        for i in range(x-1, x+2):
+            if i < 0 or i >= self._width:
+                continue
+            for j in range(y-1, y+2):
+                if j < 0 or j >= self._height:
+                    continue
+                real = self.get_real_board()
+                if (i, j) in self._flag_locs:
+                    continue
+                if real[i, j] == Spaces.BOMB:
+                    return False
+                if real[i, j] == Spaces.UNKNOWN:
+                    nb = self._get_neighboring_bombs(i, j)
+                    if nb == 0:
+                        self._safe_check_location(i, j)
+                    self._board[i, j] = Spaces(nb)
+        return True
+
+    def _check_safe_first_move(self, x, y):
+        nb = self._get_neighboring_bombs(x, y)
+        while nb > 0:
+            self._clear_neighboring_bombs(x, y)
+            new_coords = np.floor(np.multiply(np.random.rand(nb, 2), np.array([[self._width, self._height]]))).astype(int)
+            for nc in new_coords:
+                while self._board[nc[0], nc[1]] == Spaces.BOMB:
+                    nc = np.floor(np.multiply(np.random.rand(1, 2), np.array([[self._width, self._height]]))).astype(int)[0]
+                self._board[nc[0], nc[1]] = Spaces.BOMB
+            nb = self._get_neighboring_bombs(x, y)
 
     def _safe_check_location(self, x, y):
         """
@@ -90,27 +131,57 @@ class Engine:
         """
         if self._board[x, y] != Spaces.UNKNOWN:
             return
-        num_bombs = self._get_neighboring_bombs(x, y)
+        num_bombs = self._get_neighboring_bombs(x, y, True)
         self._board[x, y] = Spaces(num_bombs)
         if num_bombs == 0:
             if x-1 >= 0:
                 self._safe_check_location(x-1, y)
+                if y-1 >= 0:
+                    self._safe_check_location(x-1, y-1)
+                if y+1 < self._height:
+                    self._safe_check_location(x-1, y+1)
             if x+1 < self._width:
                 self._safe_check_location(x+1, y)
+                if y-1 >= 0:
+                    self._safe_check_location(x+1, y-1)
+                if y+1 < self._height:
+                    self._safe_check_location(x+1, y+1)
             if y-1 >= 0:
                 self._safe_check_location(x, y-1)
             if y+1 < self._height:
                 self._safe_check_location(x, y+1)
 
-    def _get_neighboring_bombs(self, x, y):
-        """
-        Counts the number of bombs neighboring the tile at (x, y)
-        """
+    def _clear_neighboring_bombs(self, x, y):
+        for i in range(x-1, x+2):
+            if i < 0 or i >= self._width:
+                continue
+            for j in range(y-1, y+2):
+                if j < 0 or j >= self._height:
+                    continue
+                self._board[i, j] = Spaces.UNKNOWN
+
+    def get_neighboring_space_count(self, x, y, s):
         count = 0
         for i in range(x-1, x+2):
             if i < 0 or i >= self._width:
                 continue
             for j in range(y-1, y+2):
+                if j < 0 or j >= self._height:
+                    continue
+                if self.get_display_board()[i, j] == s:
+                    count += 1
+        return count
+
+    def _get_neighboring_bombs(self, x, y, g2=False):
+        """
+        Counts the number of bombs neighboring the tile at (x, y)
+        """
+        ad = 2 if g2 and self._gamemode == '2' else 1
+        count = 0
+        for i in range(x-ad, x+ad+1):
+            if i < 0 or i >= self._width:
+                continue
+            for j in range(y-ad, y+ad+1):
                 if j < 0 or j >= self._height:
                     continue
                 if self._board[i, j] == Spaces.BOMB:

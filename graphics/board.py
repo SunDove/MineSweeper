@@ -10,7 +10,7 @@ class Board:
     Manages tile state and draws grid
     """
 
-    def __init__(self, x_tiles, y_tiles, tile_dim=20):
+    def __init__(self, x_tiles, y_tiles, tile_dim=40):
         """
         Game board constructor
         :param x_tiles:
@@ -27,7 +27,7 @@ class Board:
         pg.display.set_caption("Minesweeper")
 
         GREY = (155, 155, 155)
-        WHITE = (255, 255, 255)
+        WHITE = (200, 200, 200)
 
         self.tiles = {}
         dark = False
@@ -58,7 +58,7 @@ class Board:
 
         for x in range(x_dim):
             for y in range(y_dim):
-                self.tiles[(x, y)].set_value(board_array[y, x])
+                self.tiles[(y, x)].set_value(board_array[y, x])
 
     def draw_screen(self):
         """

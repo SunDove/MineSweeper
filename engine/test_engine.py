@@ -1,14 +1,15 @@
 import pytest
 import numpy as np
 from engine.engine import Engine
+import constants as C
 from constants import Spaces
 
 
 def test_valid_dimensions():
     # Everything here should just not fail
-    e = Engine(10, 10, 50)
+    e = Engine(10, 10, int(10*10*C.MAX_BOMB_RATIO))
     e = Engine(10, 10, 0)
-    e = Engine(100, 100, 5000)
+    e = Engine(100, 100, int(100*100*C.MAX_BOMB_RATIO))
     e = Engine(100, 100, 0)
 
 def test_mins():
@@ -21,9 +22,9 @@ def test_maxs():
 
 def test_bomb_ratio():
     with pytest.raises(ValueError):
-        e = Engine(10, 10, 51)
+        e = Engine(10, 10, int(10*10*C.MAX_BOMB_RATIO+1))
     with pytest.raises(ValueError):
-        e = Engine(100, 100, 5001)
+        e = Engine(100, 100, int(100*100*C.MAX_BOMB_RATIO+1))
 
 def test_toggle_flag():
     e = Engine(10, 10, 10)
@@ -34,7 +35,7 @@ def test_toggle_flag():
     assert e.get_display_board()[0, 0] == orig_space
 
 def test_click_bomb():
-    e = Engine(10, 10, 50)
+    e = Engine(10, 10, 10)
     for i in range(10):
         for j in range(10):
             if not e.check_location(i, j):
@@ -46,7 +47,7 @@ def test_display_board():
         [Spaces.BOMB, Spaces.UNKNOWN],
         [Spaces.BOMB, Spaces.BOMB]
     ])
-    e = Engine(10, 10, 50)
+    e = Engine(10, 10, 10)
     e._board = b1
     dboard = e.get_display_board()
     assert dboard[0, 0] == Spaces.UNKNOWN
@@ -71,6 +72,7 @@ def test_click_safe():
     e._board = b1
     e._width = 2
     e._height = 2
+    e._first_move = True
     e.check_location(0, 1)
     assert e.get_real_board()[0, 0] == Spaces.BOMB
     assert e.get_real_board()[1, 0] == Spaces.BOMB
@@ -85,6 +87,7 @@ def test_click_safe():
     e._board = b2
     e._width = 3
     e._height = 3
+    e._first_move = True
     e.check_location(0, 0)
     assert e.get_real_board()[0, 0] == Spaces.ZERO
     assert e.get_real_board()[0, 1] == Spaces.TWO
