@@ -9,7 +9,7 @@ class Engine:
     This includes generating the board randomly and revealing spaces
     """
 
-    def __init__(self, width, height, bombs, gamemode):
+    def __init__(self, width, height, bombs, gamemode="default"):
         """
         Engine constructor
         :param width: Width of the board, min and max values found in constants.py
