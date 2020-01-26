@@ -107,7 +107,7 @@ class Engine:
                 if real[i, j] == Spaces.BOMB:
                     return False
                 if real[i, j] == Spaces.UNKNOWN:
-                    nb = self._get_neighboring_bombs(i, j)
+                    nb = self._get_neighboring_bombs(i, j, True)
                     if nb == 0:
                         self._safe_check_location(i, j)
                     self._board[i, j] = Spaces(nb)
