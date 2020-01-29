@@ -64,9 +64,14 @@ if __name__ == "__main__":
     parser.add_argument('-bombs', action='store', dest='bombs', type=int, default=50)
     parser.add_argument('-gamemode', action='store', dest='gamemode', type=str, default='default')
     parser.add_argument('-datagen', action='store_true', dest='datagen', default=False)
+    parser.add_argument('-vectorize', action='store', dest='vectorize', default=None)
     args = parser.parse_args()
+
     if args.datagen:
         AIEngine().generate_data()
+    # Adding this hook for debugging purposes
+    if args.vectorize:
+        AIEngine().vectorize_json(args.vectorize)
     else:
         e = Engine(args.width, args.height, args.bombs, args.gamemode)
         session = Game(e)
