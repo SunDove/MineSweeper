@@ -1,6 +1,7 @@
 import pygame as pg
 from graphics.board import Board
 from engine.engine import Engine
+from engine.aiengine import AIEngine
 import argparse
 
 LEFT_CLICK = 1
@@ -62,7 +63,11 @@ if __name__ == "__main__":
     parser.add_argument('-height', action='store', dest='height', type=int, default=15)
     parser.add_argument('-bombs', action='store', dest='bombs', type=int, default=50)
     parser.add_argument('-gamemode', action='store', dest='gamemode', type=str, default='default')
+    parser.add_argument('-datagen', action='store_true', dest='datagen', default=False)
     args = parser.parse_args()
-    e = Engine(args.width, args.height, args.bombs, args.gamemode)
-    session = Game(e)
-    session.loop()
+    if args.datagen:
+        AIEngine().generate_data()
+    else:
+        e = Engine(args.width, args.height, args.bombs, args.gamemode)
+        session = Game(e)
+        session.loop()
