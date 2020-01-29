@@ -5,7 +5,7 @@ from engine.dtree import DecisionTreeWrapper
 
 class AIEngine:
 
-    def __init__(self, Wrapper):
+    def __init__(self):
         pass
 
     def train_decision_tree(self, data):
