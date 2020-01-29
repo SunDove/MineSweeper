@@ -27,6 +27,8 @@ class AIEngine:
             return
 
         feature_vectors = []
+        labels = []
+
         n = len(data[0])
         block_width = int(np.sqrt(n))
 
@@ -39,6 +41,8 @@ class AIEngine:
             for i in range(1, block_width-1):
                 for j in range(1, block_width-1):
                     if i == center and j == center:
+                        isBomb = True if multi_dim_block[i,j] == "True" else False
+                        labels.append(isBomb)
                         continue
 
                     if multi_dim_block[i,j] == 'Edge':
@@ -58,7 +62,7 @@ class AIEngine:
                     block_vector.append(value)
 
             feature_vectors.append(block_vector)
-        return feature_vectors
+        return {'x': feature_vectors, 'y': labels}
 
     def vectorize_json(self, filename):
         with open(filename) as f:
