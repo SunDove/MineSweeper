@@ -25,7 +25,7 @@ class Game:
         self.gametype = gametype
         self.aiengine = aiengine
 
-    def do_normal_loop(self):
+    def do_normal_loop(self, accept_input):
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 self.running = False
@@ -65,11 +65,8 @@ class Game:
 
                 if button == RIGHT_CLICK:
                     space_data = DataGenerator.get_data_for_space(t_x, t_y, self.engine, self.x_tiles, self.y_tiles)
-                    print(space_data)
                     features = self.aiengine.vectorize_data([space_data])['x']
-                    print(features)
                     pred = self.aiengine.get_prediction(features)
-                    print(pred)
 
                 display_array = self.engine.get_display_board()
                 self.board.update_board(display_array)
@@ -85,7 +82,7 @@ class Game:
 
         while self.running:
             if self.gametype == 'normal':
-                self.do_normal_loop()
+                self.do_normal_loop(accept_input)
             elif self.gametype == 'aitest':
                 self.do_aitest_loop()
 
