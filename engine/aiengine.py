@@ -15,10 +15,8 @@ class AIEngine:
     def get_prediction(self, features):
         return self._wrapper.predict(features)
 
-    def generate_data(self):
-        data_set = DataGenerator().get_data_set()
-        for d in data_set:
-            print(len(d))
+    def generate_data(self, n_observations=10):
+        data_set = DataGenerator(n_observations=n_observations).get_data_set()
         with open('dataset.json', 'w') as f:
             f.write(json.dumps(data_set))
 
@@ -46,7 +44,7 @@ class AIEngine:
                         continue
 
                     if multi_dim_block[i,j] == 'Edge':
-                        block_vector.append(-np.inf)
+                        block_vector.append(-10000)
                         continue
 
                     value = 0
@@ -72,3 +70,5 @@ class AIEngine:
 
         with open("vectorized" + filename, 'w') as f:
             f.write(json.dumps(features))
+
+        return features
