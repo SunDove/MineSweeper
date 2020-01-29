@@ -19,20 +19,17 @@ class DataGenerator:
         daters = []
         board = self._engine.get_display_board()
         rboard = self._engine.get_real_board()
-        for i in range(-1, 2):
+        for i in range(-2, 3):
             x = loc[0] + i
-            if x < 0 or x >= 10:
-                daters.append("Edge")
-                continue
-            for j in range(-1, 2):
+            for j in range(-2, 3):
                 y = loc[1] + j
-                if y < 0 or y >= 10:
+                if y < 0 or y >= 10 or x < 0 or x >= 10:
                     daters.append("Edge")
-                    continue
-                if i == 0 and j == 0:
-                    daters.append(str(rboard[x, y] == Spaces.BOMB))
                 else:
-                    daters.append(str(board[x, y]))
+                    if i == 0 and j == 0:
+                        daters.append(str(rboard[x, y] == Spaces.BOMB))
+                    else:
+                        daters.append(repr(board[x, y]))
 
         return daters
 
@@ -43,13 +40,13 @@ class DataGenerator:
         while not_valid:
             new_coords = np.floor(np.multiply(np.random.rand(1, 2), np.array([[10, 10]]))).astype(int)[0]
             all_unknown = True
-            for i in range(-1, 2):
+            for i in range(-2, 3):
                 if not all_unknown:
                     break
                 x = new_coords[0] + i
                 if x < 0 or x >= 10:
                     continue
-                for j in range(-1, 2):
+                for j in range(-2, 3):
                     if not all_unknown:
                         break
                     y = new_coords[1] + j
