@@ -123,7 +123,7 @@ class Engine:
 
             for i in range(self._width):
                 for j in range(self._height):
-                    if (i < x-1 or i > x+1) or (j < y-1 and j > y+1):
+                    if (i < x-1 or i > x+1) or (j < y-1 or j > y+1):
                         if self._board[i, j] == Spaces.UNKNOWN:
                             empty_tiles.append((i,j))
 
