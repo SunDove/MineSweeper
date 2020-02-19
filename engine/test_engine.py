@@ -98,3 +98,22 @@ def test_click_safe():
     assert e.get_real_board()[2, 0] == Spaces.ZERO
     assert e.get_real_board()[2, 1] == Spaces.TWO
     assert e.get_real_board()[2, 2] == Spaces.BOMB
+
+def test_check_safe_first_move():
+    b = np.array([
+        [Spaces.BOMB, Spaces.BOMB, Spaces.UNKNOWN],
+        [Spaces.UNKNOWN, Spaces.BOMB, Spaces.UNKNOWN],
+        [Spaces.UNKNOWN, Spaces.UNKNOWN, Spaces.UNKNOWN]
+    ])
+
+    e = Engine(10,10,1)
+    e._board = b
+    e._width = 3
+    e._height = 3
+    n_bombs = np.sum(e._board == Spaces.BOMB)
+    e._check_safe_first_move(0,0)
+    assert e._board[0,0] != Spaces.BOMB
+    assert e._board[1,0] != Spaces.BOMB
+    assert e._board[0,1] != Spaces.BOMB
+    assert e._board[1,1] != Spaces.BOMB
+    assert np.sum(e._board == Spaces.BOMB) == n_bombs

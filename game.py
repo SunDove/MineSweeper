@@ -97,7 +97,7 @@ if __name__ == "__main__":
     parser.add_argument('-gamemode', action='store', dest='gamemode', type=str, default='default')
     parser.add_argument('-datagen', action='store_true', dest='datagen', default=False)
     parser.add_argument('-vectorize', action='store', dest='vectorize', default=None)
-    parser.add_argument('-ai', action='store', dest='ai', default='DTC')
+    parser.add_argument('-ai', action='store', dest='ai', default=None)
     args = parser.parse_args()
 
     if args.datagen:
