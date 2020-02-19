@@ -115,14 +115,29 @@ class Engine:
 
     def _check_safe_first_move(self, x, y):
         nb = self._get_neighboring_bombs(x, y)
-        while nb > 0:
+
+        if nb > 0:
             self._clear_neighboring_bombs(x, y)
-            new_coords = np.floor(np.multiply(np.random.rand(nb, 2), np.array([[self._width, self._height]]))).astype(int)
-            for nc in new_coords:
-                while self._board[nc[0], nc[1]] == Spaces.BOMB:
-                    nc = np.floor(np.multiply(np.random.rand(1, 2), np.array([[self._width, self._height]]))).astype(int)[0]
-                self._board[nc[0], nc[1]] = Spaces.BOMB
-            nb = self._get_neighboring_bombs(x, y)
+
+            empty_tiles = []
+
+            for x in range(self._width):
+                for y in range(self._height):
+                    if self._board[x, y] == Spaces.UNKNOWN:
+                        empty_tiles.append((x,y))
+            
+            n = len(empty_tiles)
+
+            if n < nb:
+                print("Unable to relocate bombs")
+                return
+
+            # numpy won't let me randomly choose from the list of tuples :(
+            new_coord_indices = np.random.choice(range(n), nb, replace=False)
+
+            for i in new_coord_indices:
+                x, y = empty_tiles[i]
+                self._board[x, y] = Spaces.BOMB
 
     def _safe_check_location(self, x, y):
         """
