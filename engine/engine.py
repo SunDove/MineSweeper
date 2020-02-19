@@ -121,11 +121,12 @@ class Engine:
 
             empty_tiles = []
 
-            for x in range(self._width):
-                for y in range(self._height):
-                    if self._board[x, y] == Spaces.UNKNOWN:
-                        empty_tiles.append((x,y))
-            
+            for i in range(self._width):
+                for j in range(self._height):
+                    if (i < x-1 or i > x+1) or (j < y-1 and j > y+1):
+                        if self._board[i, j] == Spaces.UNKNOWN:
+                            empty_tiles.append((i,j))
+
             n = len(empty_tiles)
 
             if n < nb:
