@@ -60,6 +60,10 @@ class Board:
             for y in range(y_dim):
                 self.tiles[(y, x)].set_value(board_array[y, x])
 
+    def toggle_tile_heatmap(self, x, y, pred=None):
+        tile = self.tiles[(x, y)]
+        tile.toggle_heatmap(pred)
+
     def draw_screen(self):
         """
         Renders the board

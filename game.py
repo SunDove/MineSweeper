@@ -1,4 +1,5 @@
 import pygame as pg
+import operator
 from graphics.board import Board
 from engine.engine import Engine
 from engine.aiengine import AIEngine
@@ -24,6 +25,8 @@ class Game:
         self.engine = engine
         self.gametype = gametype
         self.aiengine = aiengine
+
+        self.show_heatmap = False
 
     def do_normal_loop(self, accept_input):
         for event in pg.event.get():
@@ -71,7 +74,38 @@ class Game:
                 display_array = self.engine.get_display_board()
                 self.board.update_board(display_array)
 
+            if event.type == pg.KEYDOWN:
+                if pg.key.get_mods() & pg.KMOD_SHIFT:
+                    self._toggle_heatmap()
+
         self.board.draw_screen()
+
+    def _toggle_heatmap(self):
+        self.show_heatmap = not self.show_heatmap
+        front = self.engine.get_frontier()
+        if self.show_heatmap:
+            for x, y in front:
+                space_data = DataGenerator.get_data_for_space(x, y, self.engine, self.x_tiles, self.y_tiles)
+                features = self.aiengine.vectorize_data([space_data])['x']
+                pred = self.aiengine.get_prediction(features)
+                self.board.toggle_tile_heatmap(x, y, pred)
+        else:
+            preds = {}
+            for x, y in front:
+                space_data = DataGenerator.get_data_for_space(x, y, self.engine, self.x_tiles, self.y_tiles)
+                features = self.aiengine.vectorize_data([space_data])['x']
+                pred = self.aiengine.get_prediction(features)
+                preds[(x, y)] = pred[0][1]
+                self.board.toggle_tile_heatmap(x, y)
+            shmove = max(preds, key=lambda key: preds[key])
+            print(shmove, preds[shmove])
+            if preds[shmove] <= 0.5:
+                self.engine.check_location(shmove[0], shmove[1])
+            else:
+                self.engine.toggle_flag(shmove[0], shmove[1])
+
+            display_array = self.engine.get_display_board()
+            self.board.update_board(display_array)
 
     def loop(self):
         """
