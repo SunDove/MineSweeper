@@ -39,6 +39,22 @@ class Engine:
     def get_height(self):
         return self._height
 
+    def get_frontier(self):
+        ret = set()
+        dboard = self.get_display_board()
+        for x in range(len(dboard)):
+            for y in range(len(dboard[x])):
+                if dboard[x,y] == Spaces.UNKNOWN:
+                    for i in range(x-1, x+2):
+                        if i < 0 or i >= len(dboard):
+                            continue
+                        for j in range(y-1, y+2):
+                            if j < 0 or j >= len(dboard[x]):
+                                continue
+                            if dboard[i, j] != Spaces.UNKNOWN and dboard[i, j] != Spaces.FLAG:
+                                ret.add((x, y))
+        return ret
+
     def get_display_board(self):
         """
         Returns the board array with flags

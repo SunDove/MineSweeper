@@ -42,8 +42,29 @@ class Tile:
 
         if val_enum != Spaces.UNKNOWN:
             self.stroke = 0
+            self.color = (200, 200, 200)
+        else:
+            self.color = (200, 200, 200)
+            self.stroke = 1
+
+    def rgb(self, minimum, maximum, value):
+        minimum, maximum = float(minimum), float(maximum)
+        ratio = 2 * (value-minimum) / (maximum - minimum)
+        b = int(max(0, 255*(1 - ratio)))
+        r = int(max(0, 255*(ratio - 1)))
+        g = 255 - b - r
+        return r, g, b
+
+    def toggle_heatmap(self, pred=None):
+        print(pred)
+        if pred is not None:
+            r, g, b = self.rgb(0, 1, pred[0][1])
+            print(r, g, b)
+            self.stroke = 2
+            self.color = (r, g, b)
         else:
             self.stroke = 1
+            self.color = (200, 200, 200)
 
     def draw(self, screen):
         """
@@ -51,20 +72,27 @@ class Tile:
         :param screen:
         :return:
         """
-        if self.stroke:
+        if self.stroke == 1:
             pg.draw.rect(screen, self.color, self.rect, 0)
             width = max(self.width*.1, 5)
             pg.draw.rect(screen, tuple(np.add(self.color, (55, 55, 55))), pg.rect.Rect(self.x, self.y, self.width-width, width), 0)
             pg.draw.rect(screen, tuple(np.add(self.color, (55, 55, 55))), pg.rect.Rect(self.x, self.y, width, self.width-width), 0)
             pg.draw.rect(screen, tuple(np.subtract(self.color, (25, 25, 25))), pg.rect.Rect(self.x, self.y+self.width-width, self.width, width), 0)
             pg.draw.rect(screen, tuple(np.subtract(self.color, (25, 25, 25))), pg.rect.Rect(self.x+self.width-width, self.y, width, self.width), 0)
-        else:
+        elif self.stroke == 0:
             pg.draw.rect(screen, tuple(np.subtract(self.color, (55, 55, 55))), self.rect, 0)
             width = max(self.width*.01, 2)
             pg.draw.rect(screen, tuple(np.subtract(self.color, (150, 150, 150))), pg.rect.Rect(self.x-width, self.y-width, self.width, width), 0)
             pg.draw.rect(screen, tuple(np.subtract(self.color, (150, 150, 150))), pg.rect.Rect(self.x-width, self.y-width, width, self.width), 0)
             pg.draw.rect(screen, tuple(np.subtract(self.color, (150, 150, 150))), pg.rect.Rect(self.x, self.y+self.width-width, self.width, width), 0)
             pg.draw.rect(screen, tuple(np.subtract(self.color, (150, 150, 150))), pg.rect.Rect(self.x+self.width-width, self.y, width, self.width), 0)
+        elif self.stroke == 2:
+            pg.draw.rect(screen, self.color, self.rect, 0)
+            width = max(self.width*.1, 5)
+            pg.draw.rect(screen, tuple(np.clip(np.add(self.color, (55, 55, 55)), 0, 255)), pg.rect.Rect(self.x, self.y, self.width-width, width), 0)
+            pg.draw.rect(screen, tuple(np.clip(np.add(self.color, (55, 55, 55)), 0, 255)), pg.rect.Rect(self.x, self.y, width, self.width-width), 0)
+            pg.draw.rect(screen, tuple(np.clip(np.subtract(self.color, (25, 25, 25)), 0, 255)), pg.rect.Rect(self.x, self.y+self.width-width, self.width, width), 0)
+            pg.draw.rect(screen, tuple(np.clip(np.subtract(self.color, (25, 25, 25)), 0, 255)), pg.rect.Rect(self.x+self.width-width, self.y, width, self.width), 0)
 
         screen.blit(self.text_surface, (self.x, self.y))
 
