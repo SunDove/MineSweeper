@@ -2,6 +2,8 @@ import numpy as np
 import json
 from engine.datagen import DataGenerator
 from engine.dtree import DecisionTreeWrapper
+import constants as C
+Spaces = C.Spaces
 
 class AIEngine:
 
@@ -44,6 +46,10 @@ class AIEngine:
                         continue
 
                     if multi_dim_block[i,j] == 'Edge':
+                        block_vector.append(10000)
+                        continue
+
+                    if multi_dim_block[i,j] == repr(Spaces.FLAG):
                         block_vector.append(-10000)
                         continue
 

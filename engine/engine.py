@@ -55,6 +55,14 @@ class Engine:
                                 ret.add((x, y))
         return ret
 
+    def get_random_bomb(self):
+        f = self.get_frontier()
+        bomblocs = set()
+        for x, y in f:
+            if self._board[x, y] == Spaces.BOMB:
+                bomblocs.add((x, y))
+        return np.random.choice(list(bomblocs))
+
     def get_display_board(self):
         """
         Returns the board array with flags
