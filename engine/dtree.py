@@ -4,7 +4,7 @@ from sklearn.tree import DecisionTreeClassifier
 
 class DecisionTreeWrapper(ClassifierWrapper):
 
-    def __init__(self, max_depth=8):
+    def __init__(self, max_depth=10):
         self._classifier = DecisionTreeClassifier(max_depth=max_depth)
         self._model = None
 

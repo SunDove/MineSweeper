@@ -21,32 +21,11 @@ class DataGenerator:
         return daters
 
     def _get_random_unknown_loc(self, engine):
-        board = engine.get_display_board()
-        not_valid = True
-        new_coords = [-1, -1]
-        while not_valid:
-            new_coords = np.floor(np.multiply(np.random.rand(1, 2), np.array([[10, 10]]))).astype(int)[0]
-            all_unknown = True
-            for i in range(-2, 3):
-                if not all_unknown:
-                    break
-                x = new_coords[0] + i
-                if x < 0 or x >= 10:
-                    continue
-                for j in range(-2, 3):
-                    if not all_unknown:
-                        break
-                    y = new_coords[1] + j
-                    if y < 0 or y >= 10:
-                        continue
-                    if board[x, y] != Spaces.UNKNOWN:
-                        all_unknown = False
-            if not all_unknown:
-                not_valid = False
-                break
-        return new_coords
+        frontier = list(engine.get_frontier())
+        index = np.random.choice(len(frontier))
+        return frontier[index]
 
-    def get_data_for_space(l1, l2, engine, maxx=10, maxy=10):
+    def get_data_for_space(l1, l2, engine, maxx=10, maxy=10, random_flag=True):
         daters = []
         board = engine.get_display_board()
         rboard = engine.get_real_board()
@@ -60,5 +39,8 @@ class DataGenerator:
                     if i == 0 and j == 0:
                         daters.append(str(rboard[x, y] == Spaces.BOMB))
                     else:
-                        daters.append(repr(board[x, y]))
+                        if rboard[x, y] == Spaces.BOMB and random_flag and np.random.uniform(0, 1.0)<0.3:
+                            daters.append(repr(Spaces.FLAG))
+                        else:
+                            daters.append(repr(board[x, y]))
         return daters

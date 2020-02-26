@@ -56,10 +56,8 @@ class Tile:
         return r, g, b
 
     def toggle_heatmap(self, pred=None):
-        print(pred)
         if pred is not None:
             r, g, b = self.rgb(0, 1, pred[0][1])
-            print(r, g, b)
             self.stroke = 2
             self.color = (r, g, b)
         else:

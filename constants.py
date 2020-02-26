@@ -25,7 +25,7 @@ class Spaces(Enum):
         if self.value == self.BOMB.value:
             return '*'
         if self.value == self.FLAG.value:
-            return '?'
+            return '|>'
         if self.value == self.UNKNOWN.value or self.value == self.ZERO.value:
             return ''
         return str(self.value)
@@ -34,7 +34,7 @@ class Spaces(Enum):
         if self.value == self.BOMB.value:
             return '*'
         if self.value == self.FLAG.value:
-            return '?'
+            return '|>'
         if self.value == self.UNKNOWN.value:
             return ''
         return str(self.value)
