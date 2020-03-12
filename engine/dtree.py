@@ -16,3 +16,15 @@ class DecisionTreeWrapper(ClassifierWrapper):
             return self._classifier.predict_proba(x_vals)
         else:
             raise TypeError('Classifier model not fit yet.')
+    
+    def label(self, predictions):
+        classes = self._classifier.classes_
+        n_classes = len(classes)
+        labels = []
+
+        for prediction in predictions:
+            maxIndex = max(range(n_classes), key=lambda x: prediction[x])
+            labels.append(classes[maxIndex])
+        
+        return labels
+
