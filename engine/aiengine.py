@@ -10,6 +10,10 @@ class AIEngine:
     def __init__(self):
         pass
 
+    def cross_validate_dtree(self, data, fraction_training, iterations):
+        self._wrapper = DecisionTreeWrapper()
+        return self._wrapper.cross_validate(data[0], data[1], fraction_training, iterations)
+
     def train_decision_tree(self, data):
         self._wrapper = DecisionTreeWrapper()
         self._wrapper.fit(data[0], data[1])

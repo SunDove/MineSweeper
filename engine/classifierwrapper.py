@@ -56,4 +56,6 @@ class ClassifierWrapper(ABC):
             pred_labels = self.label(predicted)
             accuracies.append(self.accuracy(pred_labels, valid_y))
         
-        return accuracies
+        return {'accuracies': accuracies, 
+                'mean': np.mean(accuracies), 
+                'std dev': np.std(accuracies)}

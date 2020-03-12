@@ -137,6 +137,7 @@ if __name__ == "__main__":
     parser.add_argument('-datagen', action='store', dest='datagen', type=int, default=0)
     parser.add_argument('-vectorize', action='store', dest='vectorize', default=None)
     parser.add_argument('-ai', action='store', dest='ai', default=None)
+    parser.add_argument('-cv', action='store', dest='cv', nargs=2, type=float)
     args = parser.parse_args()
 
     if args.datagen:
@@ -144,6 +145,7 @@ if __name__ == "__main__":
     # Adding this hook for debugging purposes
     if args.vectorize:
         AIEngine().vectorize_json(args.vectorize)
+
     if args.ai:
         data = {}
         try:
@@ -154,11 +156,20 @@ if __name__ == "__main__":
         if not data['x'] or not data['y']:
             raise ValueError('Missing training data, please run game.py with -datagen and -vectorize flags')
         aie = AIEngine()
+
         if args.ai == 'DTC':
-            aie.train_decision_tree([data['x'], data['y']])
-            e = Engine(args.width, args.height, args.bombs, args.gamemode)
-            session = Game(e, 50, 'aitest', aie)
-            session.loop()
+            if args.cv:
+                fract_training = args.cv[0]
+                n_iters = int(args.cv[1])
+                cv_results = aie.cross_validate_dtree([data['x'], data['y']], fract_training, n_iters)
+                print(f"Accuracies: {cv_results['accuracies']}")
+                print(f"Mean accuracy: {cv_results['mean']}")
+                print(f"Std Dev accuracy: {cv_results['std dev']}")
+            else:
+                aie.train_decision_tree([data['x'], data['y']])
+                e = Engine(args.width, args.height, args.bombs, args.gamemode)
+                session = Game(e, 50, 'aitest', aie)
+                session.loop()
         else:
             raise ValueError('Unknown classifier type {}'.format(args.ai))
     else:
