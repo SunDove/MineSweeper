@@ -24,10 +24,10 @@ class ClassifierWrapper(ABC):
 
     def accuracy(self, predicted, actual):
         return accuracy_score(predicted, actual)
-    
+
     def precision(self, predicted, actual):
         return precision_score(predicted, actual)
-    
+
     def recall(self, predicted, actual):
         return recall_score(predicted, actual)
 
@@ -37,6 +37,8 @@ class ClassifierWrapper(ABC):
         length = len(x_vals)
         indices = list(range(length))
         accuracies = []
+        precisions = []
+        recalls = []
         n_training_samples = int(fraction_training * length)
 
         for _ in range(iterations):
@@ -55,7 +57,9 @@ class ClassifierWrapper(ABC):
             predicted = self.predict(valid_x)
             pred_labels = self.label(predicted)
             accuracies.append(self.accuracy(pred_labels, valid_y))
-        
-        return {'accuracies': accuracies, 
-                'mean': np.mean(accuracies), 
-                'std dev': np.std(accuracies)}
+            precisions.append(self.precision(pred_labels, valid_y))
+            recalls.append(self.recall(pred_labels, valid_y))
+
+        return {'accuracies': accuracies,
+                'precisions': precisions,
+                'recalls': recalls}
