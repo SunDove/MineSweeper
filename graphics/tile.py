@@ -63,7 +63,7 @@ class Tile:
             r, g, b = self.rgb(0, 1, pred[0][1])
             self.stroke = 2
             self.color = (r, g, b)
-            pred_text = "{:.3}".format(pred[0][1])
+            pred_text = "{:.3f}".format(pred[0][1])
 
             self._set_text(self.heatmap_font, pred_text, (0,0,0))
         else:
