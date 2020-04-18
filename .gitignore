@@ -3,3 +3,5 @@
 Notebooks/.ipynb_checkpoints/gamestuff-checkpoint.ipynb
 *.pyc
 req.txt
+dataset.json
+vectorizeddataset.json
