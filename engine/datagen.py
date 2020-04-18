@@ -6,6 +6,7 @@ from constants import Spaces
 class DataGenerator:
 
     def __init__(self, n_observations=10, do_gen=True):
+        self._games = 0
         if do_gen:
             self._data_set = np.reshape([self._generate_one_scenerio() for k in range(n_observations)], (n_observations*10, 25)).tolist()
 
@@ -13,11 +14,18 @@ class DataGenerator:
         return self._data_set
 
     def _generate_one_scenerio(self):
-        self._engine = Engine(10, 10, 15)
+        self._games += 1
+        if self._games%1000 == 0:
+            print('{:,} complete'.format(self._games))
+        self._engine = Engine(12, 12, 30)
         first_move = np.floor(np.multiply(np.random.rand(1, 2), np.array([[10, 10]]))).astype(int)[0]
         self._engine.check_location(first_move[0], first_move[1])
-        daters = [self._make_one_board_move(self._engine) for i in range(10)]
+        daters = [self._get_next_data(self._engine) for i in range(10)]
         return daters
+
+    def _get_next_data(self, engine):
+        _ = [self._make_one_board_move(engine) for i in range(np.random.randint(low=2, high=6))]
+        return self._make_one_board_move(engine)
 
     def _make_one_board_move(self, engine):
         frontier = list(engine.get_frontier())
