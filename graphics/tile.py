@@ -22,12 +22,15 @@ class Tile:
         self.width = width
         self.x = x
         self.y = y
+        self.text_x = x
+        self.text_y = y
         self.rect = pg.rect.Rect(self.x, self.y, self.width, self.width)
         self.color = (200, 200, 200)
         self.stroke = 1
         self.DEFAULT_COLOR = color
         self.active = True
         self.font = font
+        self.heatmap_font = pg.font.Font(pg.font.get_default_font(), self.width // 3)
         self.text_surface = self.font.render("", False, (255, 255, 255))
         self.value = value
 
@@ -60,6 +63,9 @@ class Tile:
             r, g, b = self.rgb(0, 1, pred[0][1])
             self.stroke = 2
             self.color = (r, g, b)
+            pred_text = "{:.3f}".format(pred[0][1])
+
+            self._set_text(self.heatmap_font, pred_text, (0,0,0))
         else:
             self.stroke = 1
             self.color = (200, 200, 200)
@@ -92,7 +98,7 @@ class Tile:
             pg.draw.rect(screen, tuple(np.clip(np.subtract(self.color, (25, 25, 25)), 0, 255)), pg.rect.Rect(self.x, self.y+self.width-width, self.width, width), 0)
             pg.draw.rect(screen, tuple(np.clip(np.subtract(self.color, (25, 25, 25)), 0, 255)), pg.rect.Rect(self.x+self.width-width, self.y, width, self.width), 0)
 
-        screen.blit(self.text_surface, (self.x, self.y))
+        screen.blit(self.text_surface, (self.text_x, self.text_y))
 
     def _update_text_surface(self):
         """
@@ -119,4 +125,14 @@ class Tile:
 
             color = (255 - diffr*third, 255-diffg*third, 255-diffb*third)
 
-        self.text_surface = self.font.render(str(self.value), False, color)
+        self._set_text(self.font, str(self.value), color)
+    
+    def _set_text(self, font, text, color):
+        text_w, text_h = font.size(text)
+        vert_offset = (self.width - text_h) // 2
+        self.text_y = self.y + vert_offset
+
+        horiz_offset = (self.width - text_w) // 2
+        self.text_x = self.x + horiz_offset
+
+        self.text_surface = font.render(text, False, color)
