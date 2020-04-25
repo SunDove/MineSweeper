@@ -94,6 +94,8 @@ class Game:
                 space_data = DataGenerator.get_data_for_space(x, y, self.engine, self.x_tiles, self.y_tiles)
                 features = self.aiengine.vectorize_data([space_data])['x']
                 pred = self.aiengine.get_prediction(features)
+                print(pred)
+                print(self.aiengine.get_prediction(features))
                 self.board.toggle_tile_heatmap(x, y, pred)
         else:
             preds = {}
@@ -101,6 +103,7 @@ class Game:
                 space_data = DataGenerator.get_data_for_space(x, y, self.engine, self.x_tiles, self.y_tiles)
                 features = self.aiengine.vectorize_data([space_data])['x']
                 pred = self.aiengine.get_prediction(features)
+                print(pred)
                 preds[(x, y)] = pred[0][1]
                 self.board.toggle_tile_heatmap(x, y)
             shmove = max(preds, key=lambda key: abs(0.5-(preds[key]+0.01)))
@@ -170,6 +173,11 @@ if __name__ == "__main__":
                 e = Engine(args.width, args.height, args.bombs, args.gamemode)
                 session = Game(e, 50, 'aitest', aie)
                 session.loop()
+        elif args.ai == 'RFC':
+            aie.train_random_forest([data['x'], data['y']])
+            e = Engine(args.width, args.height, args.bombs, args.gamemode)
+            session = Game(e, 50, 'aitest', aie)
+            session.loop()
         else:
             raise ValueError('Unknown classifier type {}'.format(args.ai))
     else:
