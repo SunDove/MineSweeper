@@ -2,6 +2,7 @@ import numpy as np
 import json
 from engine.datagen import DataGenerator
 from engine.dtree import DecisionTreeWrapper
+from engine.rforest import RandomForestWrapper
 import constants as C
 Spaces = C.Spaces
 
@@ -16,6 +17,10 @@ class AIEngine:
 
     def train_decision_tree(self, data, max_depth=10):
         self._wrapper = DecisionTreeWrapper(max_depth=max_depth)
+        self._wrapper.fit(data[0], data[1])
+
+    def train_random_forest(self, data, max_depth=10):
+        self._wrapper =RandomForestWrapper(max_depth=max_depth)
         self._wrapper.fit(data[0], data[1])
 
     def get_prediction(self, features):
